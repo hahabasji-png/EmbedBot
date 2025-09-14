@@ -33,7 +33,7 @@
       margin-top: 15px;
       font-weight: bold;
     }
-    input, textarea {
+    input, textarea, select {
       width: 100%;
       padding: 10px;
       margin-top: 8px;
@@ -95,8 +95,21 @@
       <label for="description">Embed Description</label>
       <textarea id="description" rows="5" placeholder="Enter embed description" required></textarea>
 
-      <label for="color">Embed Color (Hex)</label>
-      <input type="text" id="color" placeholder="#3498db">
+      <label for="footer">Embed Footer</label>
+      <input type="text" id="footer" placeholder="Enter footer text">
+
+      <label for="banner">Embed Banner (Image URL)</label>
+      <input type="url" id="banner" placeholder="https://example.com/banner.png">
+
+      <label for="color">Embed Color</label>
+      <select id="color">
+        <option value="#3498db">Blue</option>
+        <option value="#e74c3c">Red</option>
+        <option value="#2ecc71">Green</option>
+        <option value="#f1c40f">Yellow</option>
+        <option value="#9b59b6">Purple</option>
+        <option value="#95a5a6">Gray</option>
+      </select>
 
       <button type="submit">Send Embed</button>
     </form>
@@ -128,15 +141,22 @@
       const webhookUrl = "https://discord.com/api/webhooks/1416733178886098996/B55yo69XhlDE6AGU25WS1PRF256Ycn8DNHWIByhIvjyPkWqB1VYG9dqHQdzPDQ-uLwHt"; // 🔴 Replace with your webhook
       const title = document.getElementById("title").value;
       const description = document.getElementById("description").value;
+      const footer = document.getElementById("footer").value;
+      const banner = document.getElementById("banner").value;
       const color = document.getElementById("color").value || "#3498db";
+
+      const embed = {
+        title: title,
+        description: description,
+        color: parseInt(color.replace("#", ""), 16),
+      };
+
+      if (footer) embed.footer = { text: footer };
+      if (banner) embed.image = { url: banner };
 
       const data = {
         username: "Website Bot",
-        embeds: [{
-          title: title,
-          description: description,
-          color: parseInt(color.replace("#", ""), 16)
-        }]
+        embeds: [embed]
       };
 
       await fetch(webhookUrl, {
