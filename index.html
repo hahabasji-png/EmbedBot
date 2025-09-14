@@ -89,6 +89,14 @@
   <!-- Main panel -->
   <main id="mainPanel">
     <form id="webhookForm">
+      <label for="preset">Choose Preset</label>
+      <select id="preset" onchange="loadPreset()">
+        <option value="custom">➕ Custom Embed</option>
+        <option value="rules">📜 Server Rules</option>
+        <option value="welcome">👋 Welcome Message</option>
+        <option value="announcements">📢 Announcements</option>
+      </select>
+
       <label for="title">Embed Title</label>
       <input type="text" id="title" placeholder="Enter embed title" required>
 
@@ -99,7 +107,7 @@
       <input type="text" id="footer" placeholder="Enter footer text">
 
       <label for="banner">Embed Banner (Image URL)</label>
-      <input type="url" id="banner" placeholder="https://example.com/banner.png">
+      <input type="url" id="banner" placeholder="Paste image link (e.g. https://...png)">
 
       <label for="color">Embed Color</label>
       <select id="color">
@@ -123,6 +131,9 @@
     // 🔑 Change this password to whatever you want
     const ADMIN_PASSWORD = "pizzapoop123";
 
+    // 🔴 Replace with your webhook URL
+    const WEBHOOK_URL = "https://discord.com/api/webhooks/1416733178886098996/B55yo69XhlDE6AGU25WS1PRF256Ycn8DNHWIByhIvjyPkWqB1VYG9dqHQdzPDQ-uLwHt";
+
     function checkPassword() {
       const input = document.getElementById("passwordInput").value;
       if (input === ADMIN_PASSWORD) {
@@ -133,12 +144,55 @@
       }
     }
 
+    // Presets
+    const presets = {
+      rules: {
+        title: "📜 Server Rules",
+        description: "1️⃣ Be respectful\n2️⃣ No spamming\n3️⃣ Keep chat clean\n4️⃣ Follow Discord TOS",
+        footer: "Moderation Team",
+        color: "#e74c3c",
+        banner: "https://i.imgur.com/UYzZ9H8.png"
+      },
+      welcome: {
+        title: "👋 Welcome!",
+        description: "Welcome to the server! Please introduce yourself in #introductions and read the rules.",
+        footer: "We’re glad you’re here!",
+        color: "#2ecc71",
+        banner: "https://i.imgur.com/mtY9aRJ.png"
+      },
+      announcements: {
+        title: "📢 Announcements",
+        description: "Stay tuned for the latest server updates and events.",
+        footer: "Server Staff",
+        color: "#3498db",
+        banner: "https://i.imgur.com/Wy1j0kL.png"
+      }
+    };
+
+    function loadPreset() {
+      const choice = document.getElementById("preset").value;
+      if (choice !== "custom") {
+        const preset = presets[choice];
+        document.getElementById("title").value = preset.title;
+        document.getElementById("description").value = preset.description;
+        document.getElementById("footer").value = preset.footer;
+        document.getElementById("banner").value = preset.banner;
+        document.getElementById("color").value = preset.color;
+      } else {
+        // clear for custom
+        document.getElementById("title").value = "";
+        document.getElementById("description").value = "";
+        document.getElementById("footer").value = "";
+        document.getElementById("banner").value = "";
+        document.getElementById("color").value = "#3498db";
+      }
+    }
+
     // Webhook sender
     const form = document.getElementById("webhookForm");
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      const webhookUrl = "https://discord.com/api/webhooks/1416733178886098996/B55yo69XhlDE6AGU25WS1PRF256Ycn8DNHWIByhIvjyPkWqB1VYG9dqHQdzPDQ-uLwHt"; // 🔴 Replace with your webhook
       const title = document.getElementById("title").value;
       const description = document.getElementById("description").value;
       const footer = document.getElementById("footer").value;
@@ -159,7 +213,7 @@
         embeds: [embed]
       };
 
-      await fetch(webhookUrl, {
+      await fetch(WEBHOOK_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data)
@@ -170,3 +224,4 @@
   </script>
 </body>
 </html>
+
