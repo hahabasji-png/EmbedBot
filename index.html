@@ -1,1 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Discord Bot Webhook Panel</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f7fa;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+    header {
+      background: #2c3e50;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    h1 { margin: 0; }
+    main {
+      max-width: 800px;
+      margin: 40px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      display: none; /* hidden until password entered */
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 8px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+    button {
+      margin-top: 20px;
+      padding: 12px 20px;
+      background: #2980b9;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover { background: #1f5f87; }
+    footer {
+      text-align: center;
+      padding: 15px;
+      margin-top: 30px;
+      background: #ecf0f1;
+      font-size: 13px;
+      color: #666;
+    }
+    #loginBox {
+      max-width: 400px;
+      margin: 100px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Discord Bot Webhook Panel</h1>
+    <p>Admin Access Only</p>
+  </header>
 
+  <!-- Login box -->
+  <div id="loginBox">
+    <h2>Enter Admin Password</h2>
+    <input type="password" id="passwordInput" placeholder="Password">
+    <button onclick="checkPassword()">Login</button>
+    <p id="errorMsg" style="color:red; display:none;">Wrong password, try again.</p>
+  </div>
+
+  <!-- Main panel -->
+  <main id="mainPanel">
+    <form id="webhookForm">
+      <label for="title">Embed Title</label>
+      <input type="text" id="title" placeholder="Enter embed title" required>
+
+      <label for="description">Embed Description</label>
+      <textarea id="description" rows="5" placeholder="Enter embed description" required></textarea>
+
+      <label for="color">Embed Color (Hex)</label>
+      <input type="text" id="color" placeholder="#3498db">
+
+      <button type="submit">Send Embed</button>
+    </form>
+  </main>
+
+  <footer>
+    &copy; 2025 | Discord Bot Control Panel
+  </footer>
+
+  <script>
+    // 🔑 Change this password to whatever you want
+    const ADMIN_PASSWORD = "pizzapoop123";
+
+    function checkPassword() {
+      const input = document.getElementById("passwordInput").value;
+      if (input === ADMIN_PASSWORD) {
+        document.getElementById("loginBox").style.display = "none";
+        document.getElementById("mainPanel").style.display = "block";
+      } else {
+        document.getElementById("errorMsg").style.display = "block";
+      }
+    }
+
+    // Webhook sender
+    const form = document.getElementById("webhookForm");
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const webhookUrl = "https://discord.com/api/webhooks/1416733178886098996/B55yo69XhlDE6AGU25WS1PRF256Ycn8DNHWIByhIvjyPkWqB1VYG9dqHQdzPDQ-uLwHt"; // 🔴 Replace with your webhook
+      const title = document.getElementById("title").value;
+      const description = document.getElementById("description").value;
+      const color = document.getElementById("color").value || "#3498db";
+
+      const data = {
+        username: "Website Bot",
+        embeds: [{
+          title: title,
+          description: description,
+          color: parseInt(color.replace("#", ""), 16)
+        }]
+      };
+
+      await fetch(webhookUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+
+      alert("Embed sent successfully!");
+    });
+  </script>
+</body>
+</html>
